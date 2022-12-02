@@ -1,106 +1,118 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, TextInput, Image, TouchableOpacity } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  Button, 
+  TextInput, 
+  Image, 
+  TouchableOpacity, 
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
 import { faCalendar } from '@fortawesome/free-solid-svg-icons';
 import { faBusinessTime } from '@fortawesome/free-solid-svg-icons';
+import { useState } from 'react';
+
+const s = StyleSheet.create({
+  bgContainer: {
+    paddingTop: '0%',
+    paddingHorizontal: 0,
+    backgroundColor: '#001f3f',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  box: {
+    backgroundColor: '#f4f6f9',
+    height: '89%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    alignItems: 'center',
+    color: '#000',
+    fontSize: 'Segoe UI',
+    fontSize: 21,
+    fontWeight: '300',
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#c2c3c5',
+    borderRadius: 5,
+    width: '90%',
+    marginVertical: 10,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  button: {
+    backgroundColor: '#f4f6f9',
+  },
+  textButton: {
+    color: '#0098d7',
+    fontSize: 20,
+  },
+  listReminderContainer: {
+    borderWidth: 0.5,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    width: '90%',
+    height: '8%',
+    marginVertical: 10,
+    padding: 15,
+  }
+})
 
 export default function App() {
+  const [enteredReminderText, setEnteredReminderText] = useState('');
+  const [listReminder, setListReminder] = useState([]);
+
+  function reminderInputHandler(text){
+    // console.log(text);
+    setEnteredReminderText(text);
+  };
+
+  function countTapHandler(){
+    // console.log('tapped');
+    // console.log(enteredReminderText);
+    setListReminder(currentReminderText => [
+      ...currentReminderText, 
+      { text: enteredReminderText, id: Math.random().toString() },
+    ]);
+  };
+
   return (
-    <View style={styles.bgContainer}>
-      <StatusBar style='dark' />
-      <View style={styles.mainContainer}>
-        <View style={styles.imageContainer}>
-          <Image style={styles.homeLogo} source={require('./assets/dist/img/logo1.png')} />
-        </View>
-        <View style={styles.quickMenu}>
-          <Text style={{fontWeight:'400', fontSize: 19, marginHorizontal: 15}}>
-            Quick Access
+    <View style={s.bgContainer}>
+      <View style={s.box}>
+        <Text style={s.text}>
+          Aplikasi Pengingat Anda
+        </Text>
+        <TextInput style={s.textInput} placeholder="Masukkan yang perlu diingat" onChangeText={reminderInputHandler} />
+        <TouchableOpacity style={s.button}>
+          <Text style={s.textButton} onPress={countTapHandler}>
+            Tambah
           </Text>
-          <TouchableOpacity style={styles.quickMenuButton}>
-            <FontAwesomeIcon icon={faClock}/>
-            <Text>
-              Attendance
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickMenuButton}>
-            <FontAwesomeIcon icon={faPlane}/>
-            <Text>
-              Business Trip
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickMenuButton}>
-            <FontAwesomeIcon icon={faCalendar}/>
-            <Text>
-              Form Izin
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.quickMenuButton}>
-            <FontAwesomeIcon icon={faBusinessTime}/>
-            <Text>
-              Form Lembur
-            </Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
+        <View style={s.listReminderContainer}>
+          <FlatList
+            data={listReminder}
+            renderItem={(itemdata) => {
+              return (
+                <View>
+                  <Text>
+                    {/* {itemdata.item.id} */}
+                    {itemdata.item.text}
+                  </Text>
+                </View>
+              )
+            }}
+          />
         </View>
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  bgContainer: {
-    backgroundColor: '#f4f6f9',
-    paddingVertical:10,
-    height: '100%',
-    width: '100%',
-    position: 'absolute',
-  },
-  mainContainer:{
-    flexDirection: 'column',
-    backgroundColor: '#f4f6f9',
-    alignItems: 'stretch',
-    height: '70%',
-  },
-  imageContainer:{
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  homeLogo: {
-    height: 250,
-    width: 250,
-  },
-  quickMenu:{
-    height: '20%',
-    backgroundColor: '#f4f6f9',
-    paddingBottom: 10,
-
-  },
-  quickMenuButton:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 30,
-    justifyContent: 'center',
-    marginVertical: 5,
-    marginHorizontal: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-  },
-  quickMenuButtonText:{
-    fontSize: 18,
-    color: '#000',
-    fontWeight: 'bold',
-    alignSelf: 'center',
-    textTransform: 'uppercase',
-  }
-});
